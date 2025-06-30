@@ -1,5 +1,5 @@
-import Card from "../../components/Card";
-import SectionTitle from "../../components/SectionTitle";
+import Card from "../../../components/Card";
+import SectionTitle from "../../../components/SectionTitle";
 
 const data = {
   income: 12500,
@@ -9,7 +9,7 @@ const data = {
 
 export default function MonthlySummary() {
   return (
-    <div>
+    <div className="flex flex-col gap-2">
       <SectionTitle title="Resumo do Mês" />
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <Card title="Entradas" value={data.income} type="income" />

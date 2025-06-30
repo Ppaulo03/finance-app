@@ -13,7 +13,7 @@ export default function Card({ title, value, type }: Props) {
       : "text-blue-600";
 
   return (
-    <div className="bg-white p-4 shadow rounded">
+    <div className="bg-gray-900 p-4 shadow rounded">
       <p className="text-sm text-gray-500">{title}</p>
       <p className={`text-xl font-semibold ${color}`}>
         R$ {value.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}

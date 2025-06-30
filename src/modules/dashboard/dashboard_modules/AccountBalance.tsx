@@ -1,4 +1,4 @@
-import SectionTitle from "../../components/SectionTitle";
+import SectionTitle from "../../../components/SectionTitle";
 
 const accounts = [
   { name: "Conta Corrente", balance: 3200 },
@@ -8,9 +8,9 @@ const accounts = [
 
 export default function AccountBalance() {
   return (
-    <div>
+    <div className="flex flex-col gap-2">
       <SectionTitle title="Saldos por Conta" />
-      <div className="bg-white p-4 shadow rounded">
+      <div className="p-4 shadow rounded">
         <ul>
           {accounts.map((acc) => (
             <li
