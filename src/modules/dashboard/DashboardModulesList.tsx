@@ -56,10 +56,14 @@ export default function DashboardModulesList({
                   onChange={(e) =>
                     setNewType(e.target.value as DashboardModuleType)
                   }
-                  className="border rounded px-2 py-1 text-sm"
+                  className="border rounded px-2 py-1 text-sm bg-white text-gray-900 dark:bg-gray-800 dark:text-white"
                 >
                   {availableTypes.map((type) => (
-                    <option key={type} value={type}>
+                    <option
+                      key={type}
+                      value={type}
+                      className="text-black dark:text-white bg-white dark:bg-gray-800"
+                    >
                       {type}
                     </option>
                   ))}
