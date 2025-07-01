@@ -9,13 +9,13 @@ import type { DragEndEvent } from "@dnd-kit/core";
 import { arrayMove } from "@dnd-kit/sortable";
 import { v4 as uuidv4 } from "uuid";
 
-import DashboardModulesList from "./DashboardModulesList";
+import DashboardModulesList from "../modules/dashboard/DashboardModulesList";
 import type {
   DashboardModuleInterface,
   DashboardModuleType,
-} from "../../types/DashboardModuleType";
+} from "../types/DashboardModuleType";
 
-import { useLocalStorageState } from "../../hooks/useLocalStorage";
+import { useLocalStorageState } from "../hooks/useLocalStorage";
 
 const LOCAL_STORAGE_KEY = "dashboard-modules-list";
 const getDefaultModules = (): DashboardModuleInterface[] => [
@@ -63,6 +63,7 @@ export default function DashboardPage() {
 
   return (
     <div className="p-6 space-y-6">
+      <h1 className="text-2xl font-bold text-center">Finanças</h1>
       <DndContext
         sensors={sensors}
         collisionDetection={closestCenter}
