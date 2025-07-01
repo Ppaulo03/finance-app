@@ -9,7 +9,6 @@ export function useLocalStorageState<T>(
   const [hasLoaded, setHasLoaded] = useState(false);
 
   useEffect(() => {
-    console.log(`Carregando "${key}" do localStorage...`);
     try {
       const raw = localStorage.getItem(key);
       const parsed = raw ? JSON.parse(raw) : null;
@@ -22,7 +21,6 @@ export function useLocalStorageState<T>(
         setState(defaultValue);
       }
     } catch (e) {
-      console.error(`Erro ao carregar "${key}" do localStorage:`, e);
       setState(defaultValue);
     } finally {
       setHasLoaded(true);
@@ -31,7 +29,6 @@ export function useLocalStorageState<T>(
 
   useEffect(() => {
     if (hasLoaded) {
-      console.log(key, state);
       localStorage.setItem(key, JSON.stringify(state));
     }
   }, [state]);
