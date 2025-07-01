@@ -1,4 +1,3 @@
-import { useState } from "react";
 import {
   DndContext,
   closestCenter,
@@ -6,24 +5,35 @@ import {
   useSensor,
   useSensors,
 } from "@dnd-kit/core";
-
 import type { DragEndEvent } from "@dnd-kit/core";
 import { arrayMove } from "@dnd-kit/sortable";
+import { v4 as uuidv4 } from "uuid";
 
 import DashboardModulesList from "./DashboardModulesList";
 import type {
   DashboardModuleInterface,
   DashboardModuleType,
 } from "../../types/DashboardModuleType";
-import { v4 as uuidv4 } from "uuid";
+
+import { useLocalStorageState } from "../../hooks/useLocalStorage";
+
+const LOCAL_STORAGE_KEY = "dashboard-modules-list";
+const getDefaultModules = (): DashboardModuleInterface[] => [
+  { id: uuidv4(), type: "summary" },
+  { id: uuidv4(), type: "chart" },
+  { id: uuidv4(), type: "accounts" },
+];
+
+const validateModules = (data: unknown): data is DashboardModuleInterface[] =>
+  Array.isArray(data) &&
+  data.every(
+    (mod) => typeof mod.id === "string" && typeof mod.type === "string"
+  );
 
 export default function DashboardPage() {
-  const [modules, setModules] = useState<DashboardModuleInterface[]>([
-    { id: "mod1", type: "summary" },
-    { id: "mod2", type: "chart" },
-    { id: "mod3", type: "accounts" },
-  ]);
-
+  const [modules, setModules] = useLocalStorageState<
+    DashboardModuleInterface[]
+  >(LOCAL_STORAGE_KEY, getDefaultModules(), validateModules);
   const sensors = useSensors(useSensor(PointerSensor));
 
   function handleDragEnd(event: DragEndEvent) {

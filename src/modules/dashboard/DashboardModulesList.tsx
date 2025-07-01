@@ -75,7 +75,7 @@ export default function DashboardModulesList({
                 </button>
                 <button
                   onClick={() => setIsAdding(false)}
-                  className="text-gray-500 hover:text-gray-700 text-sm"
+                  className=" bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700 text-sm"
                 >
                   Cancelar
                 </button>
@@ -83,7 +83,7 @@ export default function DashboardModulesList({
             ) : (
               <button
                 onClick={() => setIsAdding(true)}
-                className="text-2xl text-gray-500 hover:text-gray-700"
+                className="text-2xl hover:text-gray-900 bg-gray-700 min-w-(--dashboard-module-spacing) rounded-full p-2 shadow hover:bg-gray-400 transition-colors duration-200"
                 title="Adicionar módulo"
               >
                 +

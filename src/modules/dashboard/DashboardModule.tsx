@@ -1,6 +1,6 @@
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { DashboardModuleType } from "../../types/DashboardModuleType";
 import { availableDashboardModuleTypes as availableTypes } from "../../types/DashboardModuleType";
 import { MoreVertical, GripVertical } from "lucide-react";
@@ -31,6 +31,32 @@ export default function DashboardModule({
 
   const [openMenu, setOpenMenu] = useState(false);
   const [changingType, setChangingType] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
+
+  // Fecha ao clicar fora
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        setOpenMenu(false);
+      }
+    };
+
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setOpenMenu(false);
+      }
+    };
+
+    if (openMenu) {
+      document.addEventListener("mousedown", handleClickOutside);
+      document.addEventListener("keydown", handleEscape);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("keydown", handleEscape);
+    };
+  }, [openMenu]);
 
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -55,24 +81,28 @@ export default function DashboardModule({
       <div
         {...attributes}
         {...listeners}
-        className="absolute top-2 left-2 cursor-grab text-gray-400 hover:text-gray-600"
+        className="absolute top-2 left-2  m-1  cursor-grab hover:text-gray-400"
       >
         <GripVertical size={18} />
       </div>
 
       {/* Menu de três pontinhos */}
-      <div className="absolute top-2 right-2">
+      <div className="absolute top-2 right-2 m-1 bg-transparent">
         <button
           onClick={(e) => {
-            e.stopPropagation(); // 🔒 Evita que clique propague e acione drag
+            e.stopPropagation();
+            e.currentTarget.blur();
             setOpenMenu((prev) => !prev);
           }}
-          className="p-1 hover:bg-gray-100 rounded"
+          className="active:outline-none focus:outline-none focus:ring-2 hover:text-gray-400"
         >
-          <MoreVertical size={18} />
+          <MoreVertical size={20} />
         </button>
         {openMenu && (
-          <div className="absolute right-0 mt-2 w-36 bg-white border rounded shadow z-10">
+          <div
+            ref={menuRef}
+            className="absolute right-0 mt-2 w-36 bg-white border rounded shadow z-10"
+          >
             <ul className="text-sm text-gray-800">
               <li>
                 <button
@@ -82,7 +112,7 @@ export default function DashboardModule({
                   }}
                   className="w-full text-left px-4 py-2 hover:bg-red-100"
                 >
-                  🗑️ Excluir módulo
+                  🗑️ Excluir
                 </button>
               </li>
               <li>
@@ -103,7 +133,7 @@ export default function DashboardModule({
                     onClick={() => setChangingType(true)}
                     className="w-full text-left px-4 py-2 hover:bg-gray-100"
                   >
-                    🔁 Alterar tipo
+                    🔁 Alterar
                   </button>
                 )}
               </li>
@@ -111,8 +141,7 @@ export default function DashboardModule({
           </div>
         )}
       </div>
-
-      {children}
+      <div className="m-5">{children}</div>
     </div>
   );
 }
