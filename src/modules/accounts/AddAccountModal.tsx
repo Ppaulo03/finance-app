@@ -23,6 +23,7 @@ export default function AddAccountModal({
   balanceValue = 0,
   isEditing = false,
 }: AddAccountModalProps) {
+  balanceValue -= initialBalanceValue;
   const [name, setName] = useState(initialName);
   const [balance, setBalance] = useState(
     initialBalanceValue.toFixed(2).replace(".", ",")

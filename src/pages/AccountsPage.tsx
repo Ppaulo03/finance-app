@@ -42,6 +42,13 @@ export default function AccountsPage() {
     setShowModal(false);
   };
 
+  const handleEditAccount = (updated: AccountInterface) => {
+    setAccounts((prev) =>
+      prev.map((acc) => (acc.id === updated.id ? updated : acc))
+    );
+    setShowModal(false);
+  };
+
   const handleDelete = (id: string) => {
     setAccounts((prev) => prev.filter((acc) => acc.id !== id));
   };
@@ -56,6 +63,7 @@ export default function AccountsPage() {
             key={account.id}
             account={account}
             onDelete={handleDelete}
+            onEdit={handleEditAccount}
           />
         ))}
       </div>
