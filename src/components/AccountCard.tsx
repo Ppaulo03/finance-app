@@ -1,62 +1,29 @@
-import { useState, useRef, useEffect } from "react";
-import { MoreVertical } from "lucide-react";
+import type { AccountInterface } from "../types/AccountInterface";
+import DropdownMenuButton from "./DropdownMenuButton";
 
-interface Action {
-  label: string;
-  onClick: () => void;
-  danger?: boolean;
+interface Props {
+  account: AccountInterface;
+  onDelete: (id: string) => void;
+  // outros handlers: editar, etc
 }
 
-interface DropdownMenuButtonProps {
-  actions: Action[];
-  icon?: React.ReactNode;
-}
-
-export default function DropdownMenuButton({
-  actions,
-  icon = <MoreVertical size={18} />,
-}: DropdownMenuButtonProps) {
-  const [open, setOpen] = useState(false);
-  const menuRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    function handleClickOutside(e: MouseEvent) {
-      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
-        setOpen(false);
-      }
-    }
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
-
+export default function AccountCard({ account, onDelete }: Props) {
   return (
-    <div className="relative" ref={menuRef}>
-      <button
-        onClick={() => setOpen((prev) => !prev)}
-        className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full"
-      >
-        {icon}
-      </button>
-
-      {open && (
-        <div className="absolute right-0 mt-2 w-40 bg-white dark:bg-gray-800 shadow rounded-md z-10 text-sm text-gray-800 dark:text-white overflow-hidden">
-          {actions.map((action, index) => (
-            <button
-              key={index}
-              onClick={() => {
-                action.onClick();
-                setOpen(false);
-              }}
-              className={`w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 ${
-                action.danger ? "text-red-600" : ""
-              }`}
-            >
-              {action.label}
-            </button>
-          ))}
+    <div className="bg-gray-700 p-4 rounded-2xl shadow relative">
+      <DropdownMenuButton
+        actions={[
+          {
+            label: "🗑️ Excluir",
+            onClick: () => onDelete(account.id),
+          },
+        ]}
+      ></DropdownMenuButton>
+      <div className="m-5 text-left">
+        <div className="text-lg font-semibold text-left">{account.name}</div>
+        <div className="text-sm text-gray-500 dark:text-gray-300 text-left">
+          R$ {account.balance.toFixed(2)}
         </div>
-      )}
+      </div>
     </div>
   );
 }

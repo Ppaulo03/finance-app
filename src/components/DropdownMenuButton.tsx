@@ -8,6 +8,7 @@ interface Action {
   type?: string;
   class?: string;
   closeOnClick?: boolean;
+  value?: string;
   options?: string[];
 }
 
@@ -60,7 +61,8 @@ export default function DropdownMenuButton({
   return (
     <div className={button_div_class} ref={menuRef}>
       <button
-        onClick={() => {
+        onClick={(e) => {
+          e.currentTarget.blur();
           if (!open) {
             onOpen();
           }
@@ -73,22 +75,19 @@ export default function DropdownMenuButton({
 
       {open && (
         <div className={dropdown_div_class}>
-          <ul className={ul_class}>
+          <div className={ul_class}>
             {actions.map((action, index) => (
-              <li key={index}>
+              <div key={index}>
                 {action.type === "select" ? (
                   <select
-                    value={action.label}
-                    onChange={(value) => {
-                      action.onChange
-                        ? action.onChange(value)
-                        : action.onClick();
-
+                    value={action.value}
+                    onChange={(event) => {
+                      action.onChange?.(event);
                       if (action.closeOnClick !== false) {
                         setOpen(false);
                       }
                     }}
-                    className={action.class ? action.class : ""}
+                    className={action.class ?? ""}
                   >
                     {action.options?.map((t) => (
                       <option key={t} value={t}>
@@ -104,16 +103,20 @@ export default function DropdownMenuButton({
                         setOpen(false);
                       }
                     }}
-                    className={action.class ? action.class : ""}
+                    className={
+                      action.class
+                        ? action.class
+                        : "w-full text-left px-4 py-2 hover:bg-gray-100"
+                    }
                     title={action.label}
                     type="button"
                   >
                     {action.label}
                   </button>
                 )}
-              </li>
+              </div>
             ))}
-          </ul>
+          </div>
         </div>
       )}
     </div>

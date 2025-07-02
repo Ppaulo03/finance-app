@@ -53,9 +53,9 @@ export default function DashboardModule({
       <div
         {...attributes}
         {...listeners}
-        className="absolute top-2 left-2  m-1  cursor-grab hover:text-gray-400"
+        className="absolute top-0 left-0 h-full w-[5%] cursor-grab bg-gray-800  flex items-center justify-center rounded-l-2xl z-10"
       >
-        <GripVertical size={18} />
+        <GripVertical size={21} />
       </div>
 
       <DropdownMenuButton
@@ -69,7 +69,7 @@ export default function DashboardModule({
           },
           {
             label: changingType ? type : "🔁 Alterar",
-            type: changingType ? "submit" : "button",
+            type: changingType ? "select" : "button",
             closeOnClick: changingType,
             onClick: changingType ? () => {} : () => setChangingType(true),
             onChange: changingType
@@ -79,13 +79,14 @@ export default function DashboardModule({
               : (_) => {},
             class: changingType
               ? "w-full px-3 py-2 border-t text-sm"
-              : "w-full text-left px-4 py-2 hover:bg-gray-100",
+              : undefined,
+            value: changingType ? type : undefined,
             options: changingType ? availableTypes : [],
           },
         ]}
       ></DropdownMenuButton>
 
-      <div className="m-5">{children}</div>
+      <div className="m-5 pl-[2%]">{children}</div>
     </div>
   );
 }
