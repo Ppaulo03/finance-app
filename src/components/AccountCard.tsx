@@ -40,13 +40,13 @@ export default function AccountCard({ account, onDelete, onEdit }: Props) {
         <ConfirmDialog
           title="Excluir Conta"
           message={`Tem certeza que deseja excluir a conta "${account.name}"?`}
-          onCancel={() => setConfirmOpen(false)}
-          onConfirm={() => {
+          onConfirm={() => setConfirmOpen(false)}
+          onCancel={() => {
             onDelete(account.id);
             setConfirmOpen(false);
           }}
-          confirmButtonName="Excluir Conta"
-          cancelButtonName="Cancelar"
+          confirmButtonName="Cancelar"
+          cancelButtonName="Excluir Conta"
         />
       )}
 
