@@ -34,23 +34,28 @@ export default function DropdownMenuButton({
   const [open, setOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
+  const closeMenu = () => setOpen(false);
+
+  // Fecha ao clicar fora ou pressionar Escape
   useEffect(() => {
+    if (!open) {
+      return;
+    }
+
     const handleClickOutside = (event: MouseEvent) => {
-      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
-        setOpen(false);
+      if (!menuRef.current?.contains(event.target as Node)) {
+        closeMenu();
       }
     };
 
     const handleEscape = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
-        setOpen(false);
+        closeMenu();
       }
     };
 
-    if (open) {
-      document.addEventListener("mousedown", handleClickOutside);
-      document.addEventListener("keydown", handleEscape);
-    }
+    document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener("keydown", handleEscape);
 
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
@@ -58,8 +63,50 @@ export default function DropdownMenuButton({
     };
   }, [open]);
 
-  const handleClose = (shouldClose = true) => {
-    if (shouldClose) setOpen(false);
+  const handleActionClick = (action: Action) => {
+    action.onClick();
+    if (action.closeOnClick !== false) closeMenu();
+  };
+
+  const handleSelectChange = (
+    action: Action,
+    event: React.ChangeEvent<HTMLSelectElement>
+  ) => {
+    action.onChange?.(event);
+    if (action.closeOnClick !== false) closeMenu();
+  };
+
+  const renderAction = (action: Action) => {
+    if (action.type === "select") {
+      return (
+        <select
+          key={`select-${action.label}`}
+          value={action.value}
+          onChange={(e) => handleSelectChange(action, e)}
+          className={action.class || "w-full px-4 py-2"}
+        >
+          {action.options?.map((opt) => (
+            <option key={opt} value={opt}>
+              {opt}
+            </option>
+          ))}
+        </select>
+      );
+    }
+
+    return (
+      <button
+        key={`button-${action.label}`}
+        onClick={() => handleActionClick(action)}
+        className={
+          action.class ?? "w-full text-left px-4 py-2 hover:bg-gray-100"
+        }
+        title={action.label}
+        type="button"
+      >
+        {action.label}
+      </button>
+    );
   };
 
   return (
@@ -71,53 +118,21 @@ export default function DropdownMenuButton({
           setOpen((prev) => !prev);
         }}
         className={buttonClass}
+        aria-haspopup="true"
+        aria-expanded={open}
+        aria-label="Dropdown menu toggle"
+        type="button"
       >
         {icon}
       </button>
 
       {open && (
-        <div className={dropdownDivClass}>
-          <div className={ulClass}>
-            {actions.map((action, index) => {
-              if (action.type === "select") {
-                return (
-                  <select
-                    key={index}
-                    value={action.value}
-                    onChange={(e) => {
-                      action.onChange?.(e);
-                      handleClose(action.closeOnClick !== false);
-                    }}
-                    className={action.class || ""}
-                  >
-                    {action.options?.map((opt) => (
-                      <option key={opt} value={opt}>
-                        {opt}
-                      </option>
-                    ))}
-                  </select>
-                );
-              }
-
-              return (
-                <button
-                  key={index}
-                  onClick={() => {
-                    action.onClick();
-                    handleClose(action.closeOnClick !== false);
-                  }}
-                  className={
-                    action.class ??
-                    "w-full text-left px-4 py-2 hover:bg-gray-100"
-                  }
-                  title={action.label}
-                  type="button"
-                >
-                  {action.label}
-                </button>
-              );
-            })}
-          </div>
+        <div
+          className={dropdownDivClass}
+          role="menu"
+          aria-orientation="vertical"
+        >
+          <div className={ulClass}>{actions.map(renderAction)}</div>
         </div>
       )}
     </div>
