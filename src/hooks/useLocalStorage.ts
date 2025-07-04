@@ -1,37 +1,59 @@
 import { useEffect, useState } from "react";
 
+function getStorageItem<T>(
+  key: string,
+  defaultValue: T,
+  validate?: (data: unknown) => data is T
+): T {
+  try {
+    const raw = localStorage.getItem(key);
+    if (!raw) {
+      return defaultValue;
+    }
+
+    const parsed = JSON.parse(raw);
+    return validate?.(parsed) ? parsed : defaultValue;
+  } catch {
+    return defaultValue;
+  }
+}
+
 export function useLocalStorageState<T>(
   key: string,
   defaultValue: T,
   validate?: (data: unknown) => data is T
 ): [T, React.Dispatch<React.SetStateAction<T>>] {
-  const [state, setState] = useState<T>(defaultValue);
-  const [hasLoaded, setHasLoaded] = useState(false);
+  const [state, setState] = useState<T>(
+    getStorageItem(key, defaultValue, validate)
+  );
 
   useEffect(() => {
     try {
-      const raw = localStorage.getItem(key);
-      const parsed = raw ? JSON.parse(raw) : null;
-
-      const isValid = validate ? validate(parsed) : parsed !== null;
-
-      if (isValid) {
-        setState(parsed);
-      } else {
-        setState(defaultValue);
-      }
-    } catch (e) {
-      setState(defaultValue);
-    } finally {
-      setHasLoaded(true);
+      localStorage.setItem(key, JSON.stringify(state));
+    } catch (err) {
+      console.error(`Failed to set localStorage for key "${key}":`, err);
     }
-  }, []);
+  }, [key, state]);
 
   useEffect(() => {
-    if (hasLoaded) {
-      localStorage.setItem(key, JSON.stringify(state));
-    }
-  }, [state]);
+    const onStorage = (event: StorageEvent) => {
+      if (event.key !== key || event.newValue === null) {
+        return;
+      }
+
+      try {
+        const parsed = JSON.parse(event.newValue);
+        if (validate?.(parsed)) {
+          setState(parsed);
+        }
+      } catch (err) {
+        console.error(`Failed to parse localStorage for key "${key}":`, err);
+      }
+    };
+
+    window.addEventListener("storage", onStorage);
+    return () => window.removeEventListener("storage", onStorage);
+  }, [key, validate]);
 
   return [state, setState];
 }

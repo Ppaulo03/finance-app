@@ -5,7 +5,7 @@ interface Action {
   label: string;
   onClick: () => void;
   onChange?: (event: React.ChangeEvent<HTMLSelectElement>) => void;
-  type?: "select";
+  type?: "select" | "button";
   class?: string;
   closeOnClick?: boolean;
   value?: string;
